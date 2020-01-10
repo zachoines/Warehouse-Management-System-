@@ -5,8 +5,9 @@
 ### Sign in
 We want warhouse staff, as apposed to other non-authorized personel.
 
-
 ### view, create, edit, and delete relevenat feilds
+
+We want to be able to fully manage and view Products, Bins, Inventory Levels, and Orders database feilds in our within our web application.
 
 ## Instruction to install WMS Flask Web api
 
@@ -15,6 +16,7 @@ Run all database/table initialization scripts in .\'MySQL Scripts'
 set WMS_APP=app.py
 
 ## Instruction to run WMS Flask Web api
+
 flask run
 Open your favorite browser and navigate to: http://127.0.0.1:5000/
 
