@@ -9,27 +9,6 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="../static/signup.css" rel="stylesheet">
 
-    <script type="text/javascript">
-        function do_ajax() {
-          var req = new XMLHttpRequest();
-          // var result = document.getElementById('inputPassword');
-          req.onreadystatechange = function()
-          {
-            if(this.readyState == 4 && this.status == 200) {
-              // result.innerHTML = this.responseText;
-              console.log("Signup successfull!!!");
-            } else {
-              console.log("Something went wrong with signup request");
-            }
-          }
-  
-          req.open('POST', '/signup', true);
-          req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
-          req.send("password=" + document.getElementById('inputPassword').value);
-          req.send("email=" + document.getElementById('inputEmail').value);
-          req.send("name=" + document.getElementById('inputName').value);
-        }
-      </script>
     
   </head>
  
@@ -40,7 +19,7 @@
         <nav>
           <ul class="nav nav-pills pull-right">
             <li role="presentation" ><a href="index">Home</a></li>
-            <li role="presentation"><a href="signin">Log In</a></li>
+            <li role="presentation"><a href="showSignIn">Log In</a></li>
             <li role="presentation" class="active"><a href="#">Acount Creation</a></li>
           </ul>
         </nav>
