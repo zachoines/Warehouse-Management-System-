@@ -1,0 +1,9 @@
+# Instruction to run WMS Flask Web api
+set WMS_APP=app.py
+flask run
+
+
+# Development Methodology 
+
+T0 save python modules you use: pip freeze > requirements.txt
+TO load into python modules 
