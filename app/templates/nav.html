@@ -1,20 +1,7 @@
-<html>
 
-    
-    <head>
-      {% if title %}
-      <title>{{ title }} - Microblog</title>
-      {% else %}
-      <title>Welcome to Microblog</title>
-      {% endif %}
-    </head>
-    <body>
-        <div>
-            WMS: 
-            <a href="/index">Home</a>
-            <a href="/signin">Login</a>
-        </div>
-        <hr>
-        {% block content %}{% endblock %}
-    </body>
-</html>
+<div>
+    WMS:
+    <a href="{{ url_for('index') }}">Home</a>
+    <a href="{{ url_for('showSignUp') }}">Warehouse Account Creation</a>
+    <a href="{{ url_for('signin') }}">Warehouse Admin Signin</a>
+</div>

@@ -1,0 +1,5 @@
+CREATE TABLE `WMS`.`_product` (
+	`ProductID` BIGINT NULL AUTO_INCREMENT,
+	`SKU` VARCHAR(32765) NOT NULL unique,
+	`ProductDescription` VARCHAR(32765) NULL,
+  PRIMARY KEY (`ProductID`));

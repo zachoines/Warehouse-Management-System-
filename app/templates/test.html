@@ -1,0 +1,44 @@
+<!-- {% extends "nav.html" %}
+
+{% block content %}
+    <h1>Sign In</h1>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.user.label }}<br>
+            {{ form.user(size=32) }}<br>
+            {% for error in form.user.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.password.label }}<br>
+            {{ form.password(size=32) }}<br>
+            {% for error in form.password.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.remember() }} {{ form.remember.label }}</p>
+        <p>{{ form.signin() }}</p>
+    </form>
+{% endblock %} -->
+
+
+        <!-- <form class="form-signin">
+        <label for="inputName" class="sr-only">Name</label>
+        <input type="name" name="inputName" id="inputName" class="form-control" placeholder="Name" required autofocus>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required> -->
+                    <!-- <p>
+                <br>
+                {{ form.password(size=32) }}
+            </p>
+                <label for="name" class="sr-only">{{ form.user.label }}</label>
+                <input type="name" name="inputName" id="inputName" class="form-control" placeholder="Name" required autofocus>{{ form.username(size=32) }}</input>
+                <label for="email" class="sr-only">Email address</label>
+                <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+                <label for="password" class="sr-only">{{ form.password.label }}</label>
+                <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required> 
+            <button id="btn-post" class="btn btn-lg btn-primary btn-block" type="button">{{ form.signup() }}</button> -->

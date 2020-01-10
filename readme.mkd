@@ -1,10 +1,25 @@
-# Instruction to run WMS Flask Web api
+# Goal of application: To develop a web application that will allow warehouse staff to view, create, edit, and delete: Products, Bins, Inventory Levels, and Orders.
+
+## Success parameters
+
+### Sign in
+We want warhouse staff, as apposed to other non-authorized personel.
+
+
+### view, create, edit, and delete relevenat feilds
+
+## Instruction to install WMS Flask Web api
+
+install apache and mysql: https://www.apachefriends.org/download.html
+Run all database/table initialization scripts in .\'MySQL Scripts'
 set WMS_APP=app.py
+
+## Instruction to run WMS Flask Web api
 flask run
 Open your favorite browser and navigate to: http://127.0.0.1:5000/
 
 
-# Development Methodology http://127.0.0.1:5000/
+## Development Methodology http://127.0.0.1:5000/
 
 T0 save python modules you use: pip freeze > requirements.txt
 TO load into python modules: pip install requirments

@@ -1,0 +1,8 @@
+CREATE TABLE `WMS`.`_inventory` (
+	`InventoryID` BIGINT NOT NULL AUTO_INCREMENT,
+	`BinID` BIGINT NOT NULL,
+	`ProductID` BIGINT NOT NULL,
+	`QTY` BIGINT NOT NULL,
+  PRIMARY KEY (`InventoryID`),
+  FOREIGN KEY (`ProductID`) REFERENCES `_product`(`ProductID`),
+  FOREIGN KEY (`BinID`) REFERENCES `_bins`(`BinID`));

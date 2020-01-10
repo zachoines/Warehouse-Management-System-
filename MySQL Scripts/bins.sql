@@ -1,0 +1,4 @@
+CREATE TABLE `WMS`.`_bins` (
+	`BinID` BIGINT NOT NULL AUTO_INCREMENT,
+	`BinName` BIGINT NOT NULL unique,
+  PRIMARY KEY (`BinID`));

@@ -1,0 +1,77 @@
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Warehouse Management System Employement Signup</title>
+ 
+    
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/signup.css" rel="stylesheet">
+
+    <script type="text/javascript">
+        function do_ajax() {
+          var req = new XMLHttpRequest();
+          // var result = document.getElementById('inputPassword');
+          req.onreadystatechange = function()
+          {
+            if(this.readyState == 4 && this.status == 200) {
+              // result.innerHTML = this.responseText;
+              console.log("Signup successfull!!!");
+            } else {
+              console.log("Something went wrong with signup request");
+            }
+          }
+  
+          req.open('POST', '/signup', true);
+          req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+          req.send("password=" + document.getElementById('inputPassword').value);
+          req.send("email=" + document.getElementById('inputEmail').value);
+          req.send("name=" + document.getElementById('inputName').value);
+        }
+      </script>
+    
+  </head>
+ 
+  <body>
+ 
+    <div class="container">
+      <div class="header">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation" ><a href="index">Home</a></li>
+            <li role="presentation"><a href="signin">Log In</a></li>
+            <li role="presentation" class="active"><a href="#">Acount Creation</a></li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">Warehouse Management System Employemee Account Creation</h3>
+      </div>
+ 
+      <div class="jumbotron">
+        <h1>Sign Up</h1> 
+
+        <form class="form-signin" action="signup" method="post" role="form">
+            <div class="form-group">
+                <label for="name" class="sr-only">Name:</label>
+                <input type="text" class="form-control" placeholder="Your name." required autofocus id="name" name="name" >
+                
+                <label for="email" class="sr-only">Email:</label>
+                <input type="text" class="form-control" placeholder="Email address" required autofocus id="email" name="email" >
+                
+                <label for="password" class="sr-only">Password:</label>
+                <input type="password" class="form-control" id="password" placeholder="Password" name="password" required autofocus>
+                
+            </div>
+            <button type="submit" class="btn btn-success">Sign Up</button>
+        </form>
+      </div>
+ 
+      <footer class="footer">
+        <p>&copy; Zach Oines 2020</p>
+      </footer>
+ 
+    </div>
+  </body>
+</html>
+
+{% endblock %} 
