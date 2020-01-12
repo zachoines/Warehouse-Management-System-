@@ -1,0 +1,147 @@
+
+{% include "nav.html" %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+   
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+      }
+      
+      .navbarc {
+        overflow: hidden;
+        background-color: #333; 
+      }
+      
+      .navbarc a {
+        float: left;
+        font-size: 16px;
+        color: white;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+      }
+      
+      .subnavc {
+        float: left;
+        overflow: hidden;
+      }
+      
+      .subnavc .subnavcbtn {
+        font-size: 16px;  
+        border: none;
+        outline: none;
+        color: white;
+        padding: 14px 16px;
+        background-color: inherit;
+        font-family: inherit;
+        margin: 0;
+      }
+      
+      .navbarc a:hover, .subnavc:hover .subnavcbtn {
+        background-color: red;
+      }
+      
+      .subnavc-content {
+        display: none;
+        position: absolute;
+        left: 0;
+        background-color: red;
+        width: 100%;
+        z-index: 1;
+      }
+      
+      .subnavc-content a {
+        float: left;
+        color: white;
+        text-decoration: none;
+      }
+      
+      .subnavc-content a:hover {
+        background-color: #eee;
+        color: black;
+      }
+      
+      .subnavc:hover .subnavc-content {
+        display: block;
+      }
+    </style>
+
+  <body>
+    
+    <div class="navbarc">
+      <a href="#home">Home</a>
+      <div class="subnavc">
+        <button class="subnavcbtn">Product <i class="fa fa-caret-down"></i></button>
+        <div class="subnavc-content">
+          <div class="subnavc-content">
+            <a href="/item_management/product/view/">View</a>
+            <a href="/item_management/product/create/">Create</a>
+            <a href="/item_management/product/edit/">Edit</a>
+            <a href="/item_management/product/delete/">Delete</a>
+          </div>
+        </div>
+      </div> 
+      <div class="subnavc">
+        <button class="subnavcbtn">Orders <i class="fa fa-caret-down"></i></button>
+        <div class="subnavc-content">
+          <a href="/item_management/order/view/">View</a>
+          <a href="/item_management/order/create/">Create</a>
+          <a href="/item_management/order/edit/">Edit</a>
+          <a href="/item_management/order/delete/">Delete</a>
+        </div>
+      </div> 
+      <div class="subnavc">
+        <button class="subnavcbtn">Bins <i class="fa fa-caret-down"></i></button>
+        <div class="subnavc-content">
+          <a href="/item_management/bin/view/">View</a>
+          <a href="/item_management/bin/create/">Create</a>
+          <a href="/item_management/bin/edit/">Edit</a>
+          <a href="/item_management/bin/delete/">Delete</a>
+        </div>
+      </div>
+      <div class="subnavc">
+        <button class="subnavcbtn">Order Lines <i class="fa fa-caret-down"></i></button>
+        <div class="subnavc-content">
+          <div class="subnavc-content">
+            <a href="/item_management/order_lines/view/">View</a>
+            <a href="/item_management/order_lines/create/">Create</a>
+            <a href="/item_management/order_lines/edit/">Edit</a>
+            <a href="/item_management/order_lines/delete/">Delete</a>
+          </div>
+        </div>
+      </div>
+      <div class="subnavc">
+        <button class="subnavcbtn">Inventory <i class="fa fa-caret-down"></i></button>
+        <div class="subnavc-content">
+          <a href="/item_management/iventory/view/">View</a>
+          <a href="/item_management/iventory/create/">Create</a>
+          <a href="/item_management/iventory/edit/">Edit</a>
+          <a href="/item_management/iventory/delete/">Delete</a>
+        </div>
+      </div>
+    </div>
+    <main>
+      <div class="jumbotron">
+        <div class="container">
+          {% block actionnav %}
+          {% endblock %} 
+        </div>
+      </div>
+      
+    </main>
+  </body>
+  
+</html>
+
+    
+
+
+  

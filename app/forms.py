@@ -23,3 +23,8 @@ class CustomerSignupForm(FlaskForm):
     signup = SubmitField('Sign up')
 
     
+class ProductCreateform(FlaskForm):
+    # validators is used to forced required behaviors to HTML form elements
+    sku = StringField('Product SKU', validators=[validators.required(), validators.Length(min=6, max=35)])
+    product_description = StringField('Product description', validators=[validators.required(), validators.Length(min=3, max=35)])
+    create_product = SubmitField("Create product")

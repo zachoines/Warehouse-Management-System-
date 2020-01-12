@@ -1,11 +1,12 @@
 from flask import render_template, flash, redirect, url_for, request, json, session
 from app import app
-from app.forms import CustomerSigninForm, CustomerSignupForm
+from app.forms import CustomerSigninForm, CustomerSignupForm, ProductCreateform
 from flask_mysqldb import MySQL
 from flask_login import current_user, LoginManager, UserMixin, login_required, logout_user, current_user, login_user
 
 # Import Local classes
 from app.classes.user import User
+from app.classes.product import Product
 
 
 # MySQL configurations
@@ -29,7 +30,7 @@ def load_user(user_id):
 @app.route('/index')
 def index():
     if current_user.is_authenticated:
-        return render_template('profile.html', accountInfo = { "name" : session['user name'], "email" : session['user email']})
+        return render_template('account_management.html', accountInfo = { "name" : session['user name'], "email" : session['user email']})
     else:
         return render_template('index.html', title='Home')
 
@@ -55,7 +56,7 @@ def signin():
                 session['logged_in'] = True
                 session['user email'] = user.get_id() 
                 session['user name'] = user.get_user_name()
-                return render_template('profile.html', accountInfo = { "name" : user.get_user_name(), "email" : user.get_id()})
+                return render_template('account_management.html', accountInfo = { "name" : user.get_user_name(), "email" : user.get_id()})
 
             else:
                 session['logged_in'] = False
@@ -78,9 +79,7 @@ def signup():
         name=request.form['name']
         password=request.form['password']
         email=request.form['email']
-        print(name +  " " + email + " " + password)
-    
-        # if form.validate():
+
         if name and email and password:
             cur = mysql.connection.cursor()
             cur.execute("INSERT INTO `wms`.`__user`(`user_name`, `user_username`, `user_password`) VALUES (%s, %s, %s)", (name, email, password))
@@ -92,84 +91,153 @@ def signup():
 @app.route('/item_management/')
 def dashboard():   
     if current_user.is_authenticated:
-        return render_template('profile.html', accountInfo = { "name" : session['user name'], "email" : session['user email']})
+        return render_template('account_management.html', accountInfo = { "name" : session['user name'], "email" : session['user email']})
     else:
         return render_template('index.html', title='Home')
          
-@app.route('/item_management/<item_type>')
-def manage_items(item_type):   
-    items = None
-    print(item_type)
+@app.route('/item_management/<item_type>/<action_type>/')
+def itemAction(item_type, action_type): 
+    print(item_type + " " + action_type)
+    items = []
     if item_type == 'product':  
-        items = [
-            {
-                'ProductID': 1,
-                'SKU': 123,
-                'ProductDescription' : "A fine prodiuct"
-            },
-            {
-                'ProductID': 2,
-                'SKU': 321,
-                'ProductDescription' : "Another fine prodiuct"
-            }
-        ]
+
+        if action_type == 'create':  
+            return render_template('actions/product_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+
+        elif action_type == 'edit':
+            return render_template('actions/product_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            
+        elif action_type == 'delete':
+            return render_template('actions/product_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+        
+        elif action_type == 'view':
+
+            print("We are in view")
+            cur = mysql.connection.cursor()
+            cur.execute("SELECT * FROM `wms`.`_product`")
+            response = cur.fetchall()
+            for item in response:
+                items.append(Product(*item))
+
+            return render_template('actions/product_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
 
     elif item_type == 'order':
-        items = [
-            {
-                'ProductID': 1,
-                'SKU': 123,
-                'ProductDescription' : "A fine prodiuct"
-            },
-            {
-                'ProductID': 2,
-                'SKU': 321,
-                'ProductDescription' : "Another fine prodiuct"
-            }
-        ]
+        if action_type == 'create':  
+            pass
+       
+        elif action_type == 'edit':
+            pass
+            
+        elif action_type == 'delete':
+            pass
         
+        elif action_type == 'view':
+            pass
+            
     elif item_type == 'bin':
-        items = [
-            {
-                'ProductID': 1,
-                'SKU': 123,
-                'ProductDescription' : "A fine prodiuct"
-            },
-            {
-                'ProductID': 2,
-                'SKU': 321,
-                'ProductDescription' : "Another fine prodiuct"
-            }
-        ]
+        if action_type == 'create':  
+            pass
+       
+        elif action_type == 'edit':
+            pass
+            
+        elif action_type == 'delete':
+            pass
+        
+        elif action_type == 'view':
+            pass
     
     elif item_type == 'order_line':
-        items = [
-            {
-                'ProductID': 1,
-                'SKU': 123,
-                'ProductDescription' : "A fine prodiuct"
-            },
-            {
-                'ProductID': 2,
-                'SKU': 321,
-                'ProductDescription' : "Another fine prodiuct"
-            }
-        ]
+        if action_type == 'create':  
+            pass
+       
+        elif action_type == 'edit':
+            pass
+            
+        elif action_type == 'delete':
+            pass
+        
+        elif action_type == 'view':
+            pass
     
     elif item_type == 'inventory':
-        items = [
-            {
-                'ProductID': 1,
-                'SKU': 123,
-                'ProductDescription' : "A fine prodiuct"
-            },
-            {
-                'ProductID': 2,
-                'SKU': 321,
-                'ProductDescription' : "Another fine prodiuct"
-            }
-        ]
-    
-    return render_template('adjust_items.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+        if action_type == 'create':  
+            pass
+       
+        elif action_type == 'edit':
+            pass
+            
+        elif action_type == 'delete':
+            pass
         
+        elif action_type == 'view':
+            pass
+    return render_template('actions/product_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
 
+# Functions for inventory event interception
+@app.route('/item_management/product/view', methods = ['GET'])
+def productView():
+    pass
+
+
+@app.route('/item_management/product/create/execute', methods = ['POST'])
+def productCreate():
+    sku = request.form.get('sku')
+    product_description = request.form.get('product_description')
+
+    if sku and product_description:
+
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO `wms`.`_product`(`SKU`, `ProductDescription`) VALUES (%s, %s)", (sku, product_description))
+        
+        mysql.connection.commit()
+        cur.close()
+
+    return redirect(url_for("index"))
+    
+@app.route('/item_management/product/edit/execute', methods = ['POST'])
+def productEdit():
+    product_id = request.form.get('product_id')
+    sku = request.form.get('sku')
+    product_description = request.form.get('product_description')
+
+    if product_id and sku and product_description:
+
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE `wms`.`_product` SET `SKU` = (%s), `ProductDescription` = (%s) WHERE `ProductID` = (%s)", (sku, product_description, product_id))
+        mysql.connection.commit()
+        cur.close()
+
+    return redirect(url_for("index"))
+
+@app.route('/item_management/product/delete/execute', methods = ['POST'])
+def productDelete():
+
+    sku = request.form.get('sku')
+
+    if sku:
+
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM `wms`.`_product` WHERE `SKU` = %s", [sku])
+        mysql.connection.commit()
+        cur.close()
+
+    return redirect(url_for("index"))
+
+
+@app.route('/item_management/order/view/execute', methods = ['GET'])
+def orderView():
+    pass
+
+
+@app.route('/item_management/order/create/execute', methods = ['POST'])
+def orderCreate():
+    pass
+
+@app.route('/item_management/order/edit/execute', methods = ['POST'])
+def orderEdit():
+    pass
+
+@app.route('/item_management/order/delete/execute', methods = ['POST'])
+def orderDelete():
+    pass

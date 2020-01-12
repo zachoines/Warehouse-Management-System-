@@ -1,0 +1,27 @@
+
+{% extends "action_select.html" %}
+{% block actionnav %}
+
+<form action="{{ url_for('productEdit') }}" method="POST">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="product_id" >product_id</label>
+            <input type="text" class="form-control" id="product_id" name = "product_id" placeholder="Enter product id">
+        </div>
+        <div class="form-group col-md-6">
+            <label for="sku" >Product SKU</label>
+            <input type="text" class="form-control" id="sku" name = "sku" placeholder="Enter a SKU">
+        </div>
+        
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="product_description" >Product description</label>
+            <input type="text" class="form-control" id="product_description" name = "product_description" placeholder="Enter product description">
+        </div>
+    </div>
+    <div class="form-row">
+        <button type="submit" class="btn btn-primary">Update product</button>
+    </div>
+</form>
+{% endblock %} 
