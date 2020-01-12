@@ -1,0 +1,21 @@
+
+{% extends "action_select.html" %}
+{% block actionnav %}
+
+<form action="{{ url_for('binEdit') }}" method="POST">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="BinID" >Bin ID</label>
+            <input type="text" class="form-control" id="BinID" name = "BinID" placeholder="Enter Bin id">
+        </div>
+        <div class="form-group col-md-6">
+            <label for="BinName" >Bin Name</label>
+            <input type="text" class="form-control" id="BinName" name = "BinName" placeholder="Enter a new bin name">
+        </div>
+        
+    </div>
+    <div class="form-row">
+        <button type="submit" class="btn btn-primary">Update Bin</button>
+    </div>
+</form>
+{% endblock %} 

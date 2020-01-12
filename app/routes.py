@@ -145,23 +145,23 @@ def itemAction(item_type, action_type):
             
     elif item_type == 'bin':
         if action_type == 'create':  
-            return render_template('actions/product_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/bin_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
 
         elif action_type == 'edit':
-            return render_template('actions/product_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/bin_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
             
         elif action_type == 'delete':
-            return render_template('actions/product_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/bin_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
         
         elif action_type == 'view':
 
             cur = mysql.connection.cursor()
-            cur.execute("SELECT * FROM `wms`.`_product`")
+            cur.execute("SELECT * FROM `wms`.`_bins`")
             response = cur.fetchall()
             for item in response:
-                items.append(Product(*item))
+                items.append(Bin(*item))
 
-            return render_template('actions/product_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/bin_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
     
     elif item_type == 'order_lines':
         if action_type == 'create':  
@@ -336,6 +336,48 @@ def orderLineDelete():
 
         cur = mysql.connection.cursor()
         cur.execute("DELETE FROM `wms`.`_orderlines` WHERE `OrderLineID` = %s", [OrderLineID])
+        mysql.connection.commit()
+        cur.close()
+
+    return redirect(url_for("index"))
+
+
+
+@app.route('/item_management/bin/create/execute', methods = ['POST'])
+def binCreate():
+
+    BinName = request.form.get('BinName')
+
+    if BinName:
+
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO `wms`.`_bins`( `BinName`) VALUES (%s)", [BinName])
+        mysql.connection.commit()
+        cur.close()
+
+    return redirect(url_for("index"))
+
+@app.route('/item_management/bin/edit/execute', methods = ['POST'])
+def binEdit():
+    BinID = request.form.get('BinID')
+    BinName = request.form.get('BinName')
+
+    if BinID and BinName:
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE `wms`.`_bins` SET `BinName` = (%s) WHERE `BinID` = (%s)", (BinID, BinName))
+        mysql.connection.commit()
+        cur.close()
+
+    return redirect(url_for("index"))
+
+@app.route('/item_management/bin/delete/execute', methods = ['POST'])
+def binDelete():
+    BinID = request.form.get('BinID')
+
+    if BinID:
+
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM `wms`.`_bins` WHERE `BinID` = %s", [BinID])
         mysql.connection.commit()
         cur.close()
 

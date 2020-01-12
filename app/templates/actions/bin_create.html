@@ -1,0 +1,16 @@
+
+{% extends "action_select.html" %}
+{% block actionnav %}
+
+<form action="{{ url_for('binCreate') }}" method="POST">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="BinName" class="col-sm-2 col-form-label">Bin Name</label>
+            <input type="text" class="form-control" id="BinName" name = "BinName" placeholder="Enter Bin Name">
+        </div>
+    </div>
+    <div class="form-row">
+        <button type="submit" class="btn btn-primary">Create Bin</button>
+    </div>
+</form>
+{% endblock %} 
