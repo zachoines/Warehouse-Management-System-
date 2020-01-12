@@ -75,68 +75,100 @@
     </style>
 
   <body>
-    
-    <div class="navbarc">
-      <a href="#home">Home</a>
-      <div class="subnavc">
-        <button class="subnavcbtn">Product <i class="fa fa-caret-down"></i></button>
-        <div class="subnavc-content">
-          <div class="subnavc-content">
-            <a href="/item_management/product/view/">View</a>
-            <a href="/item_management/product/create/">Create</a>
-            <a href="/item_management/product/edit/">Edit</a>
-            <a href="/item_management/product/delete/">Delete</a>
-          </div>
-        </div>
-      </div> 
-      <div class="subnavc">
-        <button class="subnavcbtn">Orders <i class="fa fa-caret-down"></i></button>
-        <div class="subnavc-content">
-          <a href="/item_management/order/view/">View</a>
-          <a href="/item_management/order/create/">Create</a>
-          <a href="/item_management/order/edit/">Edit</a>
-          <a href="/item_management/order/delete/">Delete</a>
-        </div>
-      </div> 
-      <div class="subnavc">
-        <button class="subnavcbtn">Bins <i class="fa fa-caret-down"></i></button>
-        <div class="subnavc-content">
-          <a href="/item_management/bin/view/">View</a>
-          <a href="/item_management/bin/create/">Create</a>
-          <a href="/item_management/bin/edit/">Edit</a>
-          <a href="/item_management/bin/delete/">Delete</a>
-        </div>
+    <div class="container bootstrap snippet">
+      <div class="row">
+        <div class="col-sm-10"><h1>Welcome {{accountInfo.name}}</h1></div>
+        <div class="col-sm-2"><a href="/users" class="pull-right"><img title="profile image" class="img-circle img-responsive" src="http://www.gravatar.com/avatar/28fd20ccec6865e2d5f0e1f4446eb7bf?s=100"></a></div>
       </div>
-      <div class="subnavc">
-        <button class="subnavcbtn">Order Lines <i class="fa fa-caret-down"></i></button>
-        <div class="subnavc-content">
-          <div class="subnavc-content">
-            <a href="/item_management/order_lines/view/">View</a>
-            <a href="/item_management/order_lines/create/">Create</a>
-            <a href="/item_management/order_lines/edit/">Edit</a>
-            <a href="/item_management/order_lines/delete/">Delete</a>
-          </div>
-        </div>
-      </div>
-      <div class="subnavc">
-        <button class="subnavcbtn">Inventory <i class="fa fa-caret-down"></i></button>
-        <div class="subnavc-content">
-          <a href="/item_management/iventory/view/">View</a>
-          <a href="/item_management/iventory/create/">Create</a>
-          <a href="/item_management/iventory/edit/">Edit</a>
-          <a href="/item_management/iventory/delete/">Delete</a>
+      <div class="row">
+        <div  class="col-sm-3">
+                
+            <ul class="list-group">
+              <li class="list-group-item text-muted">Profile</li>
+              <li class="list-group-item text-right"><span class="pull-left"><strong>email</strong></span> {{accountInfo.email}}</li>
+              <li class="list-group-item text-right"><span class="pull-left"><strong>name</strong></span> {{accountInfo.name}}</li>
+              
+            </ul> 
+                         
+            <ul class="list-group">
+              <li class="list-group-item text-muted">Database at a glance<i class="fa fa-dashboard fa-1x"></i></li>
+              <li class="list-group-item text-right"><span class="pull-left"><strong>Number bins</strong></span> 125</li>
+              <li class="list-group-item text-right"><span class="pull-left"><strong>Number products</strong></span> 13</li>
+              <li class="list-group-item text-right"><span class="pull-left"><strong>Inventories</strong></span> 37</li>
+              <li class="list-group-item text-right"><span class="pull-left"><strong>Product Lines</strong></span> 78</li>
+            </ul> 
+                
+        </div class = "col-sm-3">
+          <div class =>
+          <div class = "col-sm-12">
+            <div class="navbarc">
+              <a href="index">Home</a>
+              <div class="subnavc">
+                <button class="subnavcbtn">Product <i class="fa fa-caret-down"></i></button>
+                <div class="subnavc-content">
+                  <div class = "col-sm-12">
+                    <a href="/item_management/product/view/">View</a>
+                    <a href="/item_management/product/create/">Create</a>
+                    <a href="/item_management/product/edit/">Edit</a>
+                    <a href="/item_management/product/delete/">Delete</a>
+                  </div>
+                </div>
+              </div> 
+              <div class="subnavc">
+                <button class="subnavcbtn">Orders <i class="fa fa-caret-down"></i></button>
+                <div class="subnavc-content">
+                  <a href="/item_management/order/view/">View</a>
+                  <a href="/item_management/order/create/">Create</a>
+                  <a href="/item_management/order/edit/">Edit</a>
+                  <a href="/item_management/order/delete/">Delete</a>
+                </div>
+              </div> 
+              <div class="subnavc">
+                <button class="subnavcbtn">Bins <i class="fa fa-caret-down"></i></button>
+                <div class="subnavc-content">
+                  <a href="/item_management/bin/view/">View</a>
+                  <a href="/item_management/bin/create/">Create</a>
+                  <a href="/item_management/bin/edit/">Edit</a>
+                  <a href="/item_management/bin/delete/">Delete</a>
+                </div>
+              </div>
+              <div class="subnavc">
+                <button class="subnavcbtn">Order Lines <i class="fa fa-caret-down"></i></button>
+                <div class="subnavc-content">
+                  <div class="subnavc-content">
+                    <a href="/item_management/order_lines/view/">View</a>
+                    <a href="/item_management/order_lines/create/">Create</a>
+                    <a href="/item_management/order_lines/edit/">Edit</a>
+                    <a href="/item_management/order_lines/delete/">Delete</a>
+                  </div>
+                </div>
+              </div>
+              <div class="subnavc">
+                <button class="subnavcbtn">Inventory <i class="fa fa-caret-down"></i></button>
+                <div class="subnavc-content">
+                  <a href="/item_management/iventory/view/">View</a>
+                  <a href="/item_management/iventory/create/">Create</a>
+                  <a href="/item_management/iventory/edit/">Edit</a>
+                  <a href="/item_management/iventory/delete/">Delete</a>
+                </div>
+              </div>
+            </div>
+
+          </div>  
+          <main class = "col-sm-12">
+            <div class="jumbotron">
+              <div class="container">
+                {% block actionnav %}
+                {% endblock %} 
+              </div>
+            </div>
+            
+          </main>
         </div>
       </div>
     </div>
-    <main>
-      <div class="jumbotron">
-        <div class="container">
-          {% block actionnav %}
-          {% endblock %} 
-        </div>
-      </div>
-      
-    </main>
+    
+    
   </body>
   
 </html>

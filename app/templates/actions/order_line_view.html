@@ -1,0 +1,24 @@
+{% extends "action_select.html" %}
+{% block actionnav %}
+
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Order Line ID</th>
+        <th>Order ID</th>
+        <th>Product ID</th>
+        <th>Product QTY</th>
+      </tr>
+    </thead>
+    <tbody id="items">
+      {% for orderline in products %}
+          <tr>
+              <td>{{ orderline.OrderLineID }}</td>
+              <td>{{ orderline.OrderID }}</td>
+              <td>{{ orderline.ProductID }}</td>    
+              <td>{{ orderline.QTY }}</td>  
+          </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endblock %} 

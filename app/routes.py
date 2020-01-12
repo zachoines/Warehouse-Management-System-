@@ -74,7 +74,7 @@ def showSignUp():
     return render_template('signup.html')
     
 
-@app.route('/signup')
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = CustomerSigninForm(request.form)
     if request.method == 'POST':
@@ -163,25 +163,26 @@ def itemAction(item_type, action_type):
 
             return render_template('actions/product_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
     
-    elif item_type == 'order_line':
+    elif item_type == 'order_lines':
         if action_type == 'create':  
-            return render_template('actions/product_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/order_line_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
 
         elif action_type == 'edit':
-            return render_template('actions/product_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/order_line_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
             
         elif action_type == 'delete':
-            return render_template('actions/product_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/order_line_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
         
         elif action_type == 'view':
 
             cur = mysql.connection.cursor()
-            cur.execute("SELECT * FROM `wms`.`_product`")
+            cur.execute("SELECT * FROM `wms`.`_orderlines`")
             response = cur.fetchall()
             for item in response:
-                items.append(Product(*item))
+                print(item)
+                items.append(OrderLine(*item))
 
-            return render_template('actions/product_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/order_line_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
     
     elif item_type == 'inventory':
         if action_type == 'create':  
@@ -290,6 +291,51 @@ def orderDelete():
 
         cur = mysql.connection.cursor()
         cur.execute("DELETE FROM `wms`.`_order` WHERE `OrderNumber` = %s", [OrderNumber])
+        mysql.connection.commit()
+        cur.close()
+
+    return redirect(url_for("index"))
+
+
+@app.route('/item_management/order_line/create/execute', methods = ['POST'])
+def orderLineCreate():
+
+    OrderID = request.form.get('OrderID')
+    ProductID = request.form.get('ProductID')
+    QTY = request.form.get('QTY')
+
+    if OrderID and ProductID and QTY:
+
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO `wms`.`_orderlines`( `OrderID`, `ProductID`, `QTY`) VALUES (%s, %s, %s)", (OrderID, ProductID, QTY))
+        mysql.connection.commit()
+        cur.close()
+
+    return redirect(url_for("index"))
+
+@app.route('/item_management/order_line/edit/execute', methods = ['POST'])
+def orderLineEdit():
+    OrderLineID = request.form.get('OrderLineID')
+    OrderID = request.form.get('OrderID')
+    ProductID = request.form.get('ProductID')
+    QTY = request.form.get('QTY')
+
+    if OrderLineID and OrderID and ProductID and QTY:
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE `wms`.`_orderlines` SET `OrderID` = (%s), `ProductID` = (%s), `QTY` = (%s) WHERE `OrderLineID` = (%s)", (OrderID, ProductID, QTY, OrderLineID))
+        mysql.connection.commit()
+        cur.close()
+
+    return redirect(url_for("index"))
+
+@app.route('/item_management/order_line/delete/execute', methods = ['POST'])
+def orderLineDelete():
+    OrderLineID = request.form.get('OrderLineID')
+
+    if OrderLineID:
+
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM `wms`.`_orderlines` WHERE `OrderLineID` = %s", [OrderLineID])
         mysql.connection.commit()
         cur.close()
 
