@@ -1,0 +1,31 @@
+
+{% extends "action_select.html" %}
+{% block actionnav %}
+
+<form action="{{ url_for('orderEdit') }}" method="POST">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="OrderNumber" >Order Number</label>
+            <input type="text" class="form-control" id="OrderNumber" name = "OrderNumber" placeholder="Enter Order Number">
+        </div>
+        <div class="form-group col-md-6">
+            <label for="DateOrdered" >Date Ordered</label>
+            <input type="date" class="form-control" id="DateOrdered" name = "DateOrdered" placeholder="Enter a Date Ordered">
+        </div>
+        
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="product_id" >Customer Name</label>
+            <input type="text" class="form-control" id="CustomerName" name = "CustomerName" placeholder="Enter Customer Name">
+        </div>
+        <div class="form-group col-md-6">
+            <label for="sku" >Customer Address</label>
+            <input type="text" class="form-control" id="CustomerAddress" name = "CustomerAddress" placeholder="Enter Customer Address">
+        </div>
+    </div>
+    <div class="form-row">
+        <button type="submit" class="btn btn-primary">Update Order</button>
+    </div>
+</form>
+{% endblock %} 

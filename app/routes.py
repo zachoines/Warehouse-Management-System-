@@ -7,6 +7,10 @@ from flask_login import current_user, LoginManager, UserMixin, login_required, l
 # Import Local classes
 from app.classes.user import User
 from app.classes.product import Product
+from app.classes.order import Order
+from app.classes.orderLine import OrderLine
+from app.classes.bin import Bin
+from app.classes.inventory import Inventory
 
 
 # MySQL configurations
@@ -97,7 +101,6 @@ def dashboard():
          
 @app.route('/item_management/<item_type>/<action_type>/')
 def itemAction(item_type, action_type): 
-    print(item_type + " " + action_type)
     items = []
     if item_type == 'product':  
 
@@ -112,7 +115,6 @@ def itemAction(item_type, action_type):
         
         elif action_type == 'view':
 
-            print("We are in view")
             cur = mysql.connection.cursor()
             cur.execute("SELECT * FROM `wms`.`_product`")
             response = cur.fetchall()
@@ -123,63 +125,86 @@ def itemAction(item_type, action_type):
 
     elif item_type == 'order':
         if action_type == 'create':  
-            pass
-       
+            return render_template('actions/order_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+
         elif action_type == 'edit':
-            pass
+            return render_template('actions/order_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
             
         elif action_type == 'delete':
-            pass
+            return render_template('actions/order_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
         
         elif action_type == 'view':
-            pass
+
+            cur = mysql.connection.cursor()
+            cur.execute("SELECT * FROM `wms`.`_order`")
+            response = cur.fetchall()
+            for (OrderID, OrderNumber, DateOrdered, CustomerName, CustomerAddress) in response:
+                items.append(Order(OrderID, OrderNumber, DateOrdered.date(), CustomerName, CustomerAddress))
+
+            return render_template('actions/order_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
             
     elif item_type == 'bin':
         if action_type == 'create':  
-            pass
-       
+            return render_template('actions/product_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+
         elif action_type == 'edit':
-            pass
+            return render_template('actions/product_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
             
         elif action_type == 'delete':
-            pass
+            return render_template('actions/product_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
         
         elif action_type == 'view':
-            pass
+
+            cur = mysql.connection.cursor()
+            cur.execute("SELECT * FROM `wms`.`_product`")
+            response = cur.fetchall()
+            for item in response:
+                items.append(Product(*item))
+
+            return render_template('actions/product_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
     
     elif item_type == 'order_line':
         if action_type == 'create':  
-            pass
-       
+            return render_template('actions/product_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+
         elif action_type == 'edit':
-            pass
+            return render_template('actions/product_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
             
         elif action_type == 'delete':
-            pass
+            return render_template('actions/product_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
         
         elif action_type == 'view':
-            pass
+
+            cur = mysql.connection.cursor()
+            cur.execute("SELECT * FROM `wms`.`_product`")
+            response = cur.fetchall()
+            for item in response:
+                items.append(Product(*item))
+
+            return render_template('actions/product_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
     
     elif item_type == 'inventory':
         if action_type == 'create':  
-            pass
-       
+            return render_template('actions/product_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+
         elif action_type == 'edit':
-            pass
+            return render_template('actions/product_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
             
         elif action_type == 'delete':
-            pass
+            return render_template('actions/product_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
         
         elif action_type == 'view':
-            pass
+
+            cur = mysql.connection.cursor()
+            cur.execute("SELECT * FROM `wms`.`_product`")
+            response = cur.fetchall()
+            for item in response:
+                items.append(Product(*item))
+
+            return render_template('actions/product_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
     return render_template('actions/product_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
 
 # Functions for inventory event interception
-@app.route('/item_management/product/view', methods = ['GET'])
-def productView():
-    pass
-
-
 @app.route('/item_management/product/create/execute', methods = ['POST'])
 def productCreate():
     sku = request.form.get('sku')
@@ -224,20 +249,48 @@ def productDelete():
 
     return redirect(url_for("index"))
 
-
-@app.route('/item_management/order/view/execute', methods = ['GET'])
-def orderView():
-    pass
-
-
 @app.route('/item_management/order/create/execute', methods = ['POST'])
 def orderCreate():
-    pass
+
+    OrderNumber = request.form.get('OrderNumber')
+    DateOrdered = request.form.get('DateOrdered')
+    CustomerName = request.form.get('CustomerName')
+    CustomerAddress = request.form.get('CustomerAddress')
+
+    if OrderNumber and DateOrdered and CustomerName and CustomerAddress:
+
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO `wms`.`_order`( `OrderNumber`, `DateOrdered`, `CustomerName`, `CustomerAddress`) VALUES (%s, %s, %s, %s)", (OrderNumber, DateOrdered, CustomerName, CustomerAddress))
+        
+        mysql.connection.commit()
+        cur.close()
+
+    return redirect(url_for("index"))
 
 @app.route('/item_management/order/edit/execute', methods = ['POST'])
 def orderEdit():
-    pass
+    OrderNumber = request.form.get('OrderNumber')
+    DateOrdered = request.form.get('DateOrdered')
+    CustomerName = request.form.get('CustomerName')
+    CustomerAddress = request.form.get('CustomerAddress')
+
+    if OrderNumber and DateOrdered and CustomerName and CustomerAddress:
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE `wms`.`_order` SET `DateOrdered` = (%s), `CustomerName` = (%s), `CustomerAddress` = (%s) WHERE `OrderNumber` = (%s)", (DateOrdered, CustomerName, CustomerAddress, OrderNumber))
+        mysql.connection.commit()
+        cur.close()
+
+    return redirect(url_for("index"))
 
 @app.route('/item_management/order/delete/execute', methods = ['POST'])
 def orderDelete():
-    pass
+    OrderNumber = request.form.get('OrderNumber')
+
+    if OrderNumber:
+
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM `wms`.`_order` WHERE `OrderNumber` = %s", [OrderNumber])
+        mysql.connection.commit()
+        cur.close()
+
+    return redirect(url_for("index"))

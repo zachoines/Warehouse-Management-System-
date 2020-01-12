@@ -1,0 +1,19 @@
+
+{% extends "action_select.html" %}
+{% block actionnav %}
+
+<form action="{{ url_for('orderDelete') }}" method="POST">
+    <div class="form-row">
+    
+        <div class="form-group col-md-6">
+            <label for="sku" >Order Number</label>
+            <input type="text" class="form-control" id="OrderNumber" name = "OrderNumber" placeholder="Enter order number">
+        </div>
+        
+    </div>
+    
+    <div class="form-row">
+        <button type="submit" class="btn btn-primary">Delete Order</button>
+    </div>
+</form>
+{% endblock %} 
