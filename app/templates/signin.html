@@ -4,8 +4,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Warehouse Management System Employement Signin</title>
- 
+    <title>Warehouse Management System</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="../static/signup.css" rel="stylesheet">
@@ -22,20 +21,21 @@
             <li role="presentation"  class="active"><a href="#">Log In</a></li>
             <li role="presentation" ><a href="{{ url_for('showSignUp') }}">Create Account</a></li>
           </ul>
+          
         </nav>
         <h3 class="text-muted">Warehouse Management System</h3>
       </div>
- 
+      <br>
       <div class="jumbotron">
         <h1>Log In</h1>
         <form class="form-signin" action="signin" method="post" role="form">
             <div class="form-group">
 
                 <label for="email" class="sr-only">Email:</label>
-                <input type="text" class="form-control" placeholder="Email address" required autofocus id="email" name="email" >
+                <input  required type="text" class="form-control" placeholder="Email address" required autofocus id="email" name="email" >
                 
                 <label for="password" class="sr-only">Password:</label>
-                <input type="password" class="form-control" id="password" placeholder="Password" name="password" required autofocus>
+                <input  required type="password" class="form-control" id="password" placeholder="Password" name="password" required autofocus>
                 
             </div>
             <button type="submit" class="btn btn-success">Log in</button>

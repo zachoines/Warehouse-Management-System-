@@ -4,8 +4,9 @@ class User(UserMixin):
     
     def __init__(self, user_email=None, user_password=None, db=None):
         self.authenticated = False
-        self.email = None
-        self.password = None
+        self.__user_name = None
+        self.__user_email = user_email 
+        self.__user_password = user_password
 
         if db and user_email and not user_password:
             cur = db.connection.cursor()
@@ -20,14 +21,11 @@ class User(UserMixin):
 
             if not data: 
                 cur.close()
-                self.authenticated = False
                 return 
         
             ((_, self.__user_name, self.__user_email, self.__user_password),) = data
             cur.close()
-            self.authenticated = False
-            self.email = user_email
-            self.password = None
+
         elif db and user_password and user_email:
             cur = db.connection.cursor()
             cur.execute("SELECT `__user`.`user_id`," 
@@ -39,17 +37,12 @@ class User(UserMixin):
             
             data = cur.fetchall()
             if not data: 
-                self.authenticated = False
                 cur.close()
                 return
 
             ((_, self.__user_name, self.__user_email, self.__user_password),) = data
-  
+            self.authenticated = True
             cur.close()
-
-            if  self.__user_email == user_email and self.__user_password == user_password:
-                self.authenticated = True
-
         
 
     @classmethod
@@ -65,9 +58,6 @@ class User(UserMixin):
             return User(username, user_email, db)
         else:
             return None
-
-    def is_authenticated(self):
-        return self.authenticated
 
     def is_active(self):
         return True

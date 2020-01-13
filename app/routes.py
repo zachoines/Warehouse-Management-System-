@@ -59,7 +59,6 @@ def load_user(user_id):
 @app.route('/index')
 def index():
     database_counts()
-    print(session['counts'])
     if current_user.is_authenticated:
         return render_template('account_management.html', accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
     else:
@@ -83,11 +82,9 @@ def signin():
         email=request.form['email']
         
         if email and password:
-            
             user = User(email, password, mysql)
-            login_user(user)
-    
-            if current_user.is_authenticated:
+            if user.authenticated:
+                login_user(user)
                 session['logged_in'] = True
                 session['user email'] = user.get_id() 
                 session['user name'] = user.get_user_name()
@@ -96,8 +93,10 @@ def signin():
             else:
                 session['logged_in'] = False
                 return render_template('signin.html', form=form)
+    else:
+        session['logged_in'] = False
+        return render_template('signin.html', form=form)
            
-
     
 # Called return sign up page
 @app.route('/showSignUp', methods=['GET'])
@@ -127,7 +126,6 @@ def signup():
 @app.route('/item_management/', methods=['GET'])
 def dashboard():   
     database_counts()
-    print(session['counts'])
     if current_user.is_authenticated:
         return render_template('account_management.html', accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
     else:
@@ -245,15 +243,19 @@ def productCreate():
     sku = request.form.get('sku')
     product_description = request.form.get('product_description')
 
-    if sku and product_description:
+    try:
+        if sku and product_description:
+            cur = mysql.connection.cursor()
+            cur.execute("INSERT INTO `wms`.`_product`(`SKU`, `ProductDescription`) VALUES (%s, %s)", (sku, product_description)) 
+            mysql.connection.commit()
+            cur.close()   
+    except:
+        print("Error creating product.")
+    finally:   
+        return redirect(url_for("index"))
+    
 
-        cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO `wms`.`_product`(`SKU`, `ProductDescription`) VALUES (%s, %s)", (sku, product_description))
-        
-        mysql.connection.commit()
-        cur.close()
-
-    return redirect(url_for("index"))
+    
     
 @app.route('/item_management/product/edit/execute', methods = ['POST'])
 def productEdit():
@@ -261,28 +263,32 @@ def productEdit():
     sku = request.form.get('sku')
     product_description = request.form.get('product_description')
 
-    if product_id and sku and product_description:
-
-        cur = mysql.connection.cursor()
-        cur.execute("UPDATE `wms`.`_product` SET `SKU` = (%s), `ProductDescription` = (%s) WHERE `ProductID` = (%s)", (sku, product_description, product_id))
-        mysql.connection.commit()
-        cur.close()
-
-    return redirect(url_for("index"))
+    try:
+        if product_id and sku and product_description:
+            cur = mysql.connection.cursor()
+            cur.execute("UPDATE `wms`.`_product` SET `SKU` = (%s), `ProductDescription` = (%s) WHERE `ProductID` = (%s)", (sku, product_description, product_id))
+            mysql.connection.commit()
+            ur.close()
+    except:
+        print("Error editing product.")
+    finally:
+        return redirect(url_for("index")) 
 
 @app.route('/item_management/product/delete/execute', methods = ['POST'])
 def productDelete():
 
     sku = request.form.get('sku')
 
-    if sku:
-
-        cur = mysql.connection.cursor()
-        cur.execute("DELETE FROM `wms`.`_product` WHERE `SKU` = %s", [sku])
-        mysql.connection.commit()
-        cur.close()
-
-    return redirect(url_for("index"))
+    try:
+        if sku:
+            cur = mysql.connection.cursor()
+            cur.execute("DELETE FROM `wms`.`_product` WHERE `SKU` = %s", [sku])
+            mysql.connection.commit()   
+            cur.close()       
+    except:
+        print("Error deleting product.")
+    finally:
+        return redirect(url_for("index"))
 
 @app.route('/item_management/order/create/execute', methods = ['POST'])
 def orderCreate():
@@ -292,15 +298,21 @@ def orderCreate():
     CustomerName = request.form.get('CustomerName')
     CustomerAddress = request.form.get('CustomerAddress')
 
-    if OrderNumber and DateOrdered and CustomerName and CustomerAddress:
+    try:
+        if OrderNumber and DateOrdered and CustomerName and CustomerAddress:
+            cur = mysql.connection.cursor()
+            cur.execute("INSERT INTO `wms`.`_order`( `OrderNumber`, `DateOrdered`, `CustomerName`, `CustomerAddress`) VALUES (%s, %s, %s, %s)", (OrderNumber, DateOrdered, CustomerName, CustomerAddress))
+            mysql.connection.commit()
+            cur.close()
+           
+    except expression as identifier:
+        print("Error creating order.")
+    finally:
+        return redirect(url_for("index"))
 
-        cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO `wms`.`_order`( `OrderNumber`, `DateOrdered`, `CustomerName`, `CustomerAddress`) VALUES (%s, %s, %s, %s)", (OrderNumber, DateOrdered, CustomerName, CustomerAddress))
-        
-        mysql.connection.commit()
-        cur.close()
+    
 
-    return redirect(url_for("index"))
+    
 
 @app.route('/item_management/order/edit/execute', methods = ['POST'])
 def orderEdit():
@@ -309,28 +321,39 @@ def orderEdit():
     CustomerName = request.form.get('CustomerName')
     CustomerAddress = request.form.get('CustomerAddress')
 
-    if OrderNumber and DateOrdered and CustomerName and CustomerAddress:
-        cur = mysql.connection.cursor()
-        cur.execute("UPDATE `wms`.`_order` SET `DateOrdered` = (%s), `CustomerName` = (%s), `CustomerAddress` = (%s) WHERE `OrderNumber` = (%s)", (DateOrdered, CustomerName, CustomerAddress, OrderNumber))
-        mysql.connection.commit()
-        cur.close()
+    try:
+        if OrderNumber and DateOrdered and CustomerName and CustomerAddress:
+            cur = mysql.connection.cursor()
+            cur.execute("UPDATE `wms`.`_order` SET `DateOrdered` = (%s), `CustomerName` = (%s), `CustomerAddress` = (%s) WHERE `OrderNumber` = (%s)", (DateOrdered, CustomerName, CustomerAddress, OrderNumber))
+            mysql.connection.commit()
+            cur.close()
+            
+    except:
+        print("Error editing order.")
+    finally:  
+        return redirect(url_for("index"))
 
-    return redirect(url_for("index"))
+    
+
+    
 
 @app.route('/item_management/order/delete/execute', methods = ['POST'])
 def orderDelete():
     OrderNumber = request.form.get('OrderNumber')
 
-    if OrderNumber:
+    try:
+        if OrderNumber:
+            cur = mysql.connection.cursor()
+            cur.execute("DELETE FROM `wms`.`_order` WHERE `OrderNumber` = %s", [OrderNumber])
+            mysql.connection.commit()
+            cur.close()
+            
+    except:
+        print('Error deleting order number.')
+    finally:
+        return redirect(url_for("index"))
 
-        cur = mysql.connection.cursor()
-        cur.execute("DELETE FROM `wms`.`_order` WHERE `OrderNumber` = %s", [OrderNumber])
-        mysql.connection.commit()
-        cur.close()
-
-    return redirect(url_for("index"))
-
-
+    
 @app.route('/item_management/order_line/create/execute', methods = ['POST'])
 def orderLineCreate():
 
@@ -338,14 +361,16 @@ def orderLineCreate():
     ProductID = request.form.get('ProductID')
     QTY = request.form.get('QTY')
 
-    if OrderID and ProductID and QTY:
-
-        cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO `wms`.`_orderlines`( `OrderID`, `ProductID`, `QTY`) VALUES (%s, %s, %s)", (OrderID, ProductID, QTY))
-        mysql.connection.commit()
-        cur.close()
-
-    return redirect(url_for("index"))
+    try:
+        if OrderID and ProductID and QTY:
+            cur = mysql.connection.cursor()
+            cur.execute("INSERT INTO `wms`.`_orderlines`( `OrderID`, `ProductID`, `QTY`) VALUES (%s, %s, %s)", (OrderID, ProductID, QTY))
+            mysql.connection.commit()   
+            cur.close()      
+    except:
+        print("Error creating order line")
+    finally:
+        return redirect(url_for("index"))   
 
 @app.route('/item_management/order_line/edit/execute', methods = ['POST'])
 def orderLineEdit():
@@ -354,69 +379,87 @@ def orderLineEdit():
     ProductID = request.form.get('ProductID')
     QTY = request.form.get('QTY')
 
-    if OrderLineID and OrderID and ProductID and QTY:
-        cur = mysql.connection.cursor()
-        cur.execute("UPDATE `wms`.`_orderlines` SET `OrderID` = (%s), `ProductID` = (%s), `QTY` = (%s) WHERE `OrderLineID` = (%s)", (OrderID, ProductID, QTY, OrderLineID))
-        mysql.connection.commit()
-        cur.close()
+    try:
+        if OrderLineID and OrderID and ProductID and QTY:
+            cur = mysql.connection.cursor()
+            cur.execute("UPDATE `wms`.`_orderlines` SET `OrderID` = (%s), `ProductID` = (%s), `QTY` = (%s) WHERE `OrderLineID` = (%s)", (OrderID, ProductID, QTY, OrderLineID))
+            mysql.connection.commit()     
+            cur.close()     
+    except:
+        print("Error executing order line edit")
+    finally:
+        return redirect(url_for("index"))
 
-    return redirect(url_for("index"))
+    
+
+    
 
 @app.route('/item_management/order_line/delete/execute', methods = ['POST'])
 def orderLineDelete():
     OrderLineID = request.form.get('OrderLineID')
 
-    if OrderLineID:
-
-        cur = mysql.connection.cursor()
-        cur.execute("DELETE FROM `wms`.`_orderlines` WHERE `OrderLineID` = %s", [OrderLineID])
-        mysql.connection.commit()
-        cur.close()
-
-    return redirect(url_for("index"))
-
-
+    try:
+        if OrderLineID:
+            cur = mysql.connection.cursor()
+            cur.execute("DELETE FROM `wms`.`_orderlines` WHERE `OrderLineID` = %s", [OrderLineID])
+            mysql.connection.commit()
+            cur.close()           
+    except:
+        print("Error executing order line delete.")
+    finally: 
+        return redirect(url_for("index"))
 
 @app.route('/item_management/bin/create/execute', methods = ['POST'])
 def binCreate():
 
     BinName = request.form.get('BinName')
 
-    if BinName:
+    try:
+        if BinName:
+            cur = mysql.connection.cursor()
+            cur.execute("INSERT INTO `wms`.`_bins`( `BinName`) VALUES (%s)", [BinName])
+            mysql.connection.commit()
+            cur.close()       
+    except:
+        print("There was an error inserting bin.")
+    finally: 
+        return redirect(url_for("index"))
+    
 
-        cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO `wms`.`_bins`( `BinName`) VALUES (%s)", [BinName])
-        mysql.connection.commit()
-        cur.close()
-
-    return redirect(url_for("index"))
+    
 
 @app.route('/item_management/bin/edit/execute', methods = ['POST'])
 def binEdit():
     BinID = request.form.get('BinID')
     BinName = request.form.get('BinName')
 
-    if BinID and BinName:
-        cur = mysql.connection.cursor()
-        cur.execute("UPDATE `wms`.`_bins` SET `BinName` = (%s) WHERE `BinID` = (%s)", (BinName, BinID))
-        mysql.connection.commit()
-        cur.close()
+    try:
+        if BinID and BinName:
+            cur = mysql.connection.cursor()
+            cur.execute("UPDATE `wms`.`_bins` SET `BinName` = (%s) WHERE `BinID` = (%s)", (BinName, BinID))
+            mysql.connection.commit()
+            cur.close()
+    except:
+        print("There was an error editing bin.")
+    finally:
+        return redirect(url_for("index"))
 
-    return redirect(url_for("index"))
+    
 
 @app.route('/item_management/bin/delete/execute', methods = ['POST'])
 def binDelete():
     BinID = request.form.get('BinID')
 
-    if BinID:
-
-        cur = mysql.connection.cursor()
-        cur.execute("DELETE FROM `wms`.`_bins` WHERE `BinID` = %s", [BinID])
-        mysql.connection.commit()
-        cur.close()
-
-    return redirect(url_for("index"))
-
+    try:
+        if BinID:
+            cur = mysql.connection.cursor()
+            cur.execute("DELETE FROM `wms`.`_bins` WHERE `BinID` = %s", [BinID])
+            mysql.connection.commit()
+            cur.close()
+    except:
+        print("There was an error removing bin")
+    finally:
+        return redirect(url_for("index"))
 
 @app.route('/item_management/inventory/create/execute', methods = ['POST'])
 def inventoryCreate():
@@ -425,9 +468,7 @@ def inventoryCreate():
     ProductID = request.form.get('ProductID')
     QTY = request.form.get('QTY')
 
-    if ProductID and BinID and QTY:
-
-        
+    if ProductID and BinID and QTY: 
         try:
             
             # Check to see if this pair is already in the system
@@ -436,37 +477,54 @@ def inventoryCreate():
 
             if not response:
                 cur.execute("INSERT INTO `wms`.`_inventory`( `ProductID`, `BinID`, `QTY`) VALUES (%s, %s, %s)", (BinID, ProductID, QTY))
-            
+            mysql.connection.commit()
+            cur.close()
         except:
-            print("Error: No such product id or bin id in database")
+            print("No such product id or bin id in database")
+        finally:
+            return redirect(url_for("index"))
             
-        mysql.connection.commit()
-        cur.close()
+        
 
-    return redirect(url_for("index"))
+    
 
 @app.route('/item_management/inventory/edit/execute', methods = ['POST'])
 def inventoryEdit():
     InventoryID = request.form.get('InventoryID')
     QTY = request.form.get('QTY')
 
-    if InventoryID and QTY:
-        cur = mysql.connection.cursor()
-        cur.execute("UPDATE `wms`.`_inventory` SET `QTY` = (%s) WHERE `InventoryID` = (%s)", (QTY, InventoryID))
-        mysql.connection.commit()
-        cur.close()
+    try:
+        if InventoryID and QTY:
+            cur = mysql.connection.cursor()
+            cur.execute("UPDATE `wms`.`_inventory` SET `QTY` = (%s) WHERE `InventoryID` = (%s)", (QTY, InventoryID))
+            mysql.connection.commit() 
+            cur.close()    
+    except:
+        print("There was an error editing inventory.")
+    finally:     
+        return redirect(url_for("index"))
+        
 
-    return redirect(url_for("index"))
+    
+
+    
 
 @app.route('/item_management/inventory/delete/execute', methods = ['POST'])
 def inventoryDelete():
     InventoryID = request.form.get('InventoryID')
 
-    if InventoryID:
-
-        cur = mysql.connection.cursor()
-        cur.execute("DELETE FROM `wms`.`_inventory` WHERE `InventoryID` = %s", [InventoryID])
-        mysql.connection.commit()
+    try:
+        if InventoryID:
+            cur = mysql.connection.cursor()
+            cur.execute("DELETE FROM `wms`.`_inventory` WHERE `InventoryID` = %s", [InventoryID])
+            mysql.connection.commit()
+            
+    except:
+        print("There was an issue deleting inventory")
+    finally:
         cur.close()
+        return redirect(url_for("index"))
 
-    return redirect(url_for("index"))
+    
+
+    
