@@ -1,29 +1,16 @@
 # Goal of application: To develop a web application that will allow warehouse staff to view, create, edit, and delete: Products, Bins, Inventory Levels, and Orders.
 
-## Success parameters
+## Instruction to install WMS 
 
-### Sign in
-We want warhouse staff, as apposed to other non-authorized personel.
+* Clone repo
+* type "pip install requirments" in terminal
+* Install apache and mysql: https://www.apachefriends.org/download.html
+* Run all database/table initialization scripts in .\'MySQL Scripts' in MySQL WorkBench or similar
+* For Windows, enter in cmd "set WMS_APP=app.py", or "export WMS_APP=app.py" on OSx or linux 
 
-### view, create, edit, and delete relevenat feilds
+## Instruction to run WMS 
 
-We want to be able to fully manage and view Products, Bins, Inventory Levels, and Orders database feilds in our within our web application.
-
-## Instruction to install WMS Flask Web api
-
-install apache and mysql: https://www.apachefriends.org/download.html
-Run all database/table initialization scripts in .\'MySQL Scripts'
-set WMS_APP=app.py
-
-## Instruction to run WMS Flask Web api
-
-flask run
-Open your favorite browser and navigate to: http://127.0.0.1:5000/
+* Type "flask run" in terminal
+* Open your favorite browser and navigate to: http://127.0.0.1:5000/
 
 
-## Development Methodology http://127.0.0.1:5000/
-
-T0 save python modules you use: pip freeze > requirements.txt
-TO load into python modules: pip install requirments
-
-# Site Usage Documentation 
