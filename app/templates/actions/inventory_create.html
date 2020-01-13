@@ -1,0 +1,26 @@
+
+{% extends "action_select.html" %}
+{% block actionnav %}
+
+<form action="{{ url_for('inventoryCreate') }}" method="POST">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="ProductID" class="col-sm-2 col-form-label">Product ID</label>
+            <input type="text" class="form-control" id="ProductID" name = "ProductID" placeholder="Enter Product ID">
+        </div>
+        <div class="form-group col-md-6">
+            <label for="BinID" class="col-sm-2 col-form-label">Bin ID</label>
+            <input type="text" class="form-control" id="BinID" name = "BinID" placeholder="Enter Bin ID">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="QTY" class="col-sm-2 col-form-label">Product quantity</label>
+            <input type="text" class="form-control" id="QTY" name = "QTY" placeholder="Enter product quantity">
+        </div>
+    </div>
+    <div class="form-row">
+        <button type="submit" class="btn btn-primary">Create inventory</button>
+    </div>
+</form>
+{% endblock %} 

@@ -1,0 +1,19 @@
+
+{% extends "action_select.html" %}
+{% block actionnav %}
+
+<form action="{{ url_for('inventoryDelete') }}" method="POST">
+    <div class="form-row">
+    
+        <div class="form-group col-md-6">
+            <label for="InventoryID" >Inventory ID</label>
+            <input type="text" class="form-control" id="InventoryID" name = "InventoryID" placeholder="Enter inventory id">
+        </div>
+        
+    </div>
+    
+    <div class="form-row">
+        <button type="submit" class="btn btn-primary">Delete inventory space</button>
+    </div>
+</form>
+{% endblock %} 

@@ -4,5 +4,9 @@ CREATE TABLE `WMS`.`_inventory` (
 	`ProductID` BIGINT NOT NULL,
 	`QTY` BIGINT NOT NULL,
   PRIMARY KEY (`InventoryID`),
-  FOREIGN KEY (`ProductID`) REFERENCES `_product`(`ProductID`),
-  FOREIGN KEY (`BinID`) REFERENCES `_bins`(`BinID`));
+  FOREIGN KEY (`ProductID`) 
+	REFERENCES `_product`(`ProductID`)
+    ON UPDATE CASCADE ON DELETE RESTRICT,
+  FOREIGN KEY (`BinID`) 
+	REFERENCES `_bins`(`BinID`)
+    ON UPDATE CASCADE ON DELETE RESTRICT);
