@@ -4,9 +4,9 @@
 
 * Clone repo
 * type "pip install requirments" in terminal
-* Install apache and mysql: https://www.apachefriends.org/download.html
-* Run all database/table initialization scripts in .\'MySQL Scripts' in MySQL WorkBench or similar
-* For Windows, enter in cmd "set WMS_APP=app.py", or "export WMS_APP=app.py" on OSx or linux 
+* Install MySQL: https://www.apachefriends.org/download.html
+* Run all database/table initialization scripts in .\'MySQL Scripts' in MySQL WorkBench or similar. Starting with database.sql and ending with orderlines.sql and inventory.sql
+* For Windows, enter in cmd "set WMS_APP=app.py", or "export WMS_APP=app.py" on OSx or linux
 
 ## Instruction to run WMS 
 
