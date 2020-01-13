@@ -89,13 +89,14 @@
               <li class="list-group-item text-right"><span class="pull-left"><strong>name</strong></span> {{accountInfo.name}}</li>
               
             </ul> 
-                         
+            <br>     
             <ul class="list-group">
               <li class="list-group-item text-muted">Database at a glance<i class="fa fa-dashboard fa-1x"></i></li>
-              <li class="list-group-item text-right"><span class="pull-left"><strong>Number bins</strong></span> 125</li>
-              <li class="list-group-item text-right"><span class="pull-left"><strong>Number products</strong></span> 13</li>
-              <li class="list-group-item text-right"><span class="pull-left"><strong>Inventories</strong></span> 37</li>
-              <li class="list-group-item text-right"><span class="pull-left"><strong>Product Lines</strong></span> 78</li>
+              <li class="list-group-item text-right"><span class="pull-left"><strong>Number bins</strong></span> {{accountInfo.counts.bins}}</li>
+              <li class="list-group-item text-right"><span class="pull-left"><strong>Number products</strong></span> {{accountInfo.counts.products}}</li>
+              <li class="list-group-item text-right"><span class="pull-left"><strong>Inventories</strong></span> {{accountInfo.counts.inventory}}</li>
+              <li class="list-group-item text-right"><span class="pull-left"><strong>Order Lines</strong></span> {{accountInfo.counts.orderlines}}</li>
+              <li class="list-group-item text-right"><span class="pull-left"><strong>Orders</strong></span> {{accountInfo.counts.orders}}</li>
             </ul> 
                 
         </div class = "col-sm-3">

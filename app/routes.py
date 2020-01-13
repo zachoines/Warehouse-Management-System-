@@ -1,3 +1,4 @@
+# Import Server, routing, and database classes
 from flask import render_template, flash, redirect, url_for, request, json, session
 from app import app
 from app.forms import CustomerSigninForm, CustomerSignupForm, ProductCreateform
@@ -25,6 +26,30 @@ mysql = MySQL(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+# Utility Functions
+def count(table):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT COUNT(*) FROM " + "`wms`.`_" + table + "`", [])
+    ((response,),) = cur.fetchall()
+    return response
+
+def database_counts():
+    bins = count('bins')
+    inventory = count("inventory")
+    orders = count("order")
+    orderlines = count("orderlines")
+    products = count("product")
+
+    updated_counts = {
+        "bins" : bins,
+        "inventory" : inventory,
+        "orders" : orders,
+        "orderlines" : orderlines,
+        "products" : products
+    }
+
+    session['counts'] = updated_counts
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.get(user_id=user_id, db=mysql)
@@ -33,8 +58,10 @@ def load_user(user_id):
 @app.route('/')
 @app.route('/index')
 def index():
+    database_counts()
+    print(session['counts'])
     if current_user.is_authenticated:
-        return render_template('account_management.html', accountInfo = { "name" : session['user name'], "email" : session['user email']})
+        return render_template('account_management.html', accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
     else:
         return render_template('index.html', title='Home')
 
@@ -42,12 +69,16 @@ def index():
 def showSignIn():
     return render_template('signin.html')
 
-@app.route('/signin', methods=['POST'])
+@app.route('/signOut', methods=['GET', 'POST'])
+def signOut():
+    logout_user()
+    return render_template('signin.html')
+
+@app.route('/signin', methods=['GET', 'POST'])
 def signin():
     form = CustomerSigninForm()
     if request.method == 'POST':
         
-        print(form.errors)
         password=request.form['password']
         email=request.form['email']
         
@@ -60,7 +91,7 @@ def signin():
                 session['logged_in'] = True
                 session['user email'] = user.get_id() 
                 session['user name'] = user.get_user_name()
-                return render_template('account_management.html', accountInfo = { "name" : user.get_user_name(), "email" : user.get_id()})
+                return render_template('account_management.html', accountInfo = { "name" : user.get_user_name(), "email" : user.get_id(), "counts" : session['counts']})
 
             else:
                 session['logged_in'] = False
@@ -68,18 +99,18 @@ def signin():
            
 
     
-
-@app.route('/showSignUp', methods=['GET', 'POST'])
+# Called return sign up page
+@app.route('/showSignUp', methods=['GET'])
 def showSignUp():
     return render_template('signup.html')
     
 
+# Called to return sign in page
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = CustomerSigninForm(request.form)
     if request.method == 'POST':
         
-        print(form.errors)
         name=request.form['name']
         password=request.form['password']
         email=request.form['email']
@@ -92,10 +123,13 @@ def signup():
 
     return render_template('signin.html', form=form)
 
-@app.route('/item_management/')
+# This is the main user portal
+@app.route('/item_management/', methods=['GET'])
 def dashboard():   
+    database_counts()
+    print(session['counts'])
     if current_user.is_authenticated:
-        return render_template('account_management.html', accountInfo = { "name" : session['user name'], "email" : session['user email']})
+        return render_template('account_management.html', accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
     else:
         return render_template('index.html', title='Home')
          
@@ -105,13 +139,13 @@ def itemAction(item_type, action_type):
     if item_type == 'product':  
 
         if action_type == 'create':  
-            return render_template('actions/product_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/product_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
 
         elif action_type == 'edit':
-            return render_template('actions/product_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/product_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
             
         elif action_type == 'delete':
-            return render_template('actions/product_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/product_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
         
         elif action_type == 'view':
 
@@ -121,17 +155,17 @@ def itemAction(item_type, action_type):
             for item in response:
                 items.append(Product(*item))
 
-            return render_template('actions/product_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/product_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
 
     elif item_type == 'order':
         if action_type == 'create':  
-            return render_template('actions/order_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/order_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
 
         elif action_type == 'edit':
-            return render_template('actions/order_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/order_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
             
         elif action_type == 'delete':
-            return render_template('actions/order_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/order_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
         
         elif action_type == 'view':
 
@@ -141,17 +175,17 @@ def itemAction(item_type, action_type):
             for (OrderID, OrderNumber, DateOrdered, CustomerName, CustomerAddress) in response:
                 items.append(Order(OrderID, OrderNumber, DateOrdered.date(), CustomerName, CustomerAddress))
 
-            return render_template('actions/order_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/order_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
             
     elif item_type == 'bin':
         if action_type == 'create':  
-            return render_template('actions/bin_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/bin_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
 
         elif action_type == 'edit':
-            return render_template('actions/bin_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/bin_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
             
         elif action_type == 'delete':
-            return render_template('actions/bin_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/bin_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] , "counts" : session['counts']})
         
         elif action_type == 'view':
 
@@ -161,17 +195,17 @@ def itemAction(item_type, action_type):
             for item in response:
                 items.append(Bin(*item))
 
-            return render_template('actions/bin_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/bin_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
     
     elif item_type == 'order_lines':
         if action_type == 'create':  
-            return render_template('actions/order_line_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/order_line_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
 
         elif action_type == 'edit':
-            return render_template('actions/order_line_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/order_line_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
             
         elif action_type == 'delete':
-            return render_template('actions/order_line_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/order_line_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] , "counts" : session['counts']})
         
         elif action_type == 'view':
 
@@ -182,18 +216,18 @@ def itemAction(item_type, action_type):
                 print(item)
                 items.append(OrderLine(*item))
 
-            return render_template('actions/inventory_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/inventory_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
     
     elif item_type == 'inventory':
         if action_type == 'create':  
             print("here we are")
-            return render_template('actions/inventory_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/inventory_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
 
         elif action_type == 'edit':
-            return render_template('actions/inventory_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/inventory_edit.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
             
         elif action_type == 'delete':
-            return render_template('actions/inventory_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/inventory_delete.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
         
         elif action_type == 'view':
             cur = mysql.connection.cursor()
@@ -202,8 +236,8 @@ def itemAction(item_type, action_type):
             for item in response:
                 items.append(Inventory(*item))
 
-            return render_template('actions/inventory_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
-    return render_template('actions/product_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'] })
+            return render_template('actions/inventory_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
+    return render_template('actions/product_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
 
 # Functions for inventory event interception
 @app.route('/item_management/product/create/execute', methods = ['POST'])
@@ -402,14 +436,7 @@ def inventoryCreate():
 
             if not response:
                 cur.execute("INSERT INTO `wms`.`_inventory`( `ProductID`, `BinID`, `QTY`) VALUES (%s, %s, %s)", (BinID, ProductID, QTY))
-            # cur.execute("UPDATE `wms`.`_inventory` SET `QTY` = (%s) WHERE  (`BinID` = (%s) AND `ProductID` = (%s))", (QTY, BinID, ProductID))
-            # cur.execute("SELECT * FROM `wms`.`_inventory` WHERE (`BinID` = %s AND `ProductID` = %s)", (BinID, ProductID))
-            # response = cur.fetchall()
-
-            # if response:
-            #     cur.execute("DELETE FROM `wms`.`_inventory` WHERE (`BinID` = %s AND `ProductID` = %s)", (BinID, ProductID))
-            #     cur.execute("INSERT INTO `wms`.`_inventory`( `ProductID`, `BinID`, `QTY`) VALUES (%s, %s, %s)", (BinID, ProductID, QTY))     
-                
+            
         except:
             print("Error: No such product id or bin id in database")
             

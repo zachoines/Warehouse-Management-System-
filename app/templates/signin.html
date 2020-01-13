@@ -18,9 +18,9 @@
       <div class="header">
         <nav>
           <ul class="nav nav-pills pull-right">
-            <li role="presentation" ><a href="index">Home</a></li>
+            <li role="presentation" ><a href="{{ url_for('index') }}">Home</a></li>
             <li role="presentation"  class="active"><a href="#">Log In</a></li>
-            <li role="presentation" ><a href="showSignUp">Create Account</a></li>
+            <li role="presentation" ><a href="{{ url_for('showSignUp') }}">Create Account</a></li>
           </ul>
         </nav>
         <h3 class="text-muted">Warehouse Management System</h3>
