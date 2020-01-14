@@ -108,7 +108,7 @@
           <div class =>
           <div class = "col-sm-12">
             <div class="navbarc">
-              <a href="index">Home</a>
+              <a href="{{ url_for('index') }}">Home</a>
               <div class="subnavc">
                 <button class="subnavcbtn">Product <i class="fa fa-caret-down"></i></button>
                 <div class="subnavc-content">
@@ -164,7 +164,10 @@
           <main class = "col-sm-12">
             <div class="jumbotron">
               <div class="container">
+                {% block response %}
+                {% endblock %} 
                 {% block actionnav %}
+                  
                 {% endblock %} 
               </div>
             </div>

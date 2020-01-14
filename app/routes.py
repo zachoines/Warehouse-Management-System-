@@ -150,6 +150,7 @@ def itemAction(item_type, action_type):
             cur = mysql.connection.cursor()
             cur.execute("SELECT * FROM `wms`.`_product`")
             response = cur.fetchall()
+            cur.close() 
             for item in response:
                 items.append(Product(*item))
 
@@ -170,6 +171,7 @@ def itemAction(item_type, action_type):
             cur = mysql.connection.cursor()
             cur.execute("SELECT * FROM `wms`.`_order`")
             response = cur.fetchall()
+            cur.close() 
             for (OrderID, OrderNumber, DateOrdered, CustomerName, CustomerAddress) in response:
                 items.append(Order(OrderID, OrderNumber, DateOrdered.date(), CustomerName, CustomerAddress))
 
@@ -190,6 +192,7 @@ def itemAction(item_type, action_type):
             cur = mysql.connection.cursor()
             cur.execute("SELECT * FROM `wms`.`_bins`")
             response = cur.fetchall()
+            cur.close() 
             for item in response:
                 items.append(Bin(*item))
 
@@ -210,15 +213,14 @@ def itemAction(item_type, action_type):
             cur = mysql.connection.cursor()
             cur.execute("SELECT * FROM `wms`.`_orderlines`")
             response = cur.fetchall()
+            cur.close() 
             for item in response:
-                print(item)
                 items.append(OrderLine(*item))
 
-            return render_template('actions/inventory_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
+            return render_template('actions/order_line_view.html', products=items, itemType=item_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
     
     elif item_type == 'inventory':
         if action_type == 'create':  
-            print("here we are")
             return render_template('actions/inventory_create.html', itemType = item_type, actionType = action_type, accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']})
 
         elif action_type == 'edit':
@@ -231,6 +233,7 @@ def itemAction(item_type, action_type):
             cur = mysql.connection.cursor()
             cur.execute("SELECT * FROM `wms`.`_inventory`")
             response = cur.fetchall()
+            cur.close() 
             for item in response:
                 items.append(Inventory(*item))
 
@@ -250,9 +253,13 @@ def productCreate():
             mysql.connection.commit()
             cur.close()   
     except:
-        print("Error creating product.")
-    finally:   
-        return redirect(url_for("index"))
+        response = {
+            "error" : "Error creating product",
+        }
+        return render_template('responses/error.html', products=[], itemType="", accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']}, response = response)
+
+ 
+    return redirect(url_for("index"))
     
 
     
@@ -264,15 +271,20 @@ def productEdit():
     product_description = request.form.get('product_description')
 
     try:
-        if product_id and sku and product_description:
+        if product_id != None and sku != None and product_description != None:
             cur = mysql.connection.cursor()
             cur.execute("UPDATE `wms`.`_product` SET `SKU` = (%s), `ProductDescription` = (%s) WHERE `ProductID` = (%s)", (sku, product_description, product_id))
             mysql.connection.commit()
             ur.close()
     except:
-        print("Error editing product.")
-    finally:
-        return redirect(url_for("index")) 
+
+        response = {
+            "error" : "Error editing product.",
+        }
+
+        return render_template('responses/error.html', products=[], itemType="", accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']}, response=response)
+    
+    return redirect(url_for("index"))
 
 @app.route('/item_management/product/delete/execute', methods = ['POST'])
 def productDelete():
@@ -280,15 +292,20 @@ def productDelete():
     sku = request.form.get('sku')
 
     try:
-        if sku:
+        if sku != None:
             cur = mysql.connection.cursor()
             cur.execute("DELETE FROM `wms`.`_product` WHERE `SKU` = %s", [sku])
             mysql.connection.commit()   
             cur.close()       
     except:
-        print("Error deleting product.")
-    finally:
-        return redirect(url_for("index"))
+
+        response = {
+            "error" : "Error deleting product.",
+        }
+
+        return render_template('responses/error.html', products=[], itemType="", accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']}, response=response)
+    
+    return redirect(url_for("index"))
 
 @app.route('/item_management/order/create/execute', methods = ['POST'])
 def orderCreate():
@@ -299,20 +316,22 @@ def orderCreate():
     CustomerAddress = request.form.get('CustomerAddress')
 
     try:
-        if OrderNumber and DateOrdered and CustomerName and CustomerAddress:
+        if OrderNumber != None and DateOrdered != None and CustomerName !=None and CustomerAddress != None:
             cur = mysql.connection.cursor()
             cur.execute("INSERT INTO `wms`.`_order`( `OrderNumber`, `DateOrdered`, `CustomerName`, `CustomerAddress`) VALUES (%s, %s, %s, %s)", (OrderNumber, DateOrdered, CustomerName, CustomerAddress))
             mysql.connection.commit()
             cur.close()
            
-    except expression as identifier:
-        print("Error creating order.")
-    finally:
-        return redirect(url_for("index"))
+    except:
 
-    
+        response = {
+            "error" : "Error creating order.",
+        }
 
+        return render_template('responses/error.html', products=[], itemType="", accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']}, response=response)
     
+    return redirect(url_for("index"))
+
 
 @app.route('/item_management/order/edit/execute', methods = ['POST'])
 def orderEdit():
@@ -322,36 +341,43 @@ def orderEdit():
     CustomerAddress = request.form.get('CustomerAddress')
 
     try:
-        if OrderNumber and DateOrdered and CustomerName and CustomerAddress:
+        if OrderNumber != None and DateOrdered != None and CustomerName != None and CustomerAddress != None:
             cur = mysql.connection.cursor()
             cur.execute("UPDATE `wms`.`_order` SET `DateOrdered` = (%s), `CustomerName` = (%s), `CustomerAddress` = (%s) WHERE `OrderNumber` = (%s)", (DateOrdered, CustomerName, CustomerAddress, OrderNumber))
             mysql.connection.commit()
             cur.close()
             
     except:
-        print("Error editing order.")
-    finally:  
-        return redirect(url_for("index"))
 
-    
+        response = {
+            "error" : "Error in editing order.",
+        }
 
+        return render_template('responses/error.html', products=[], itemType="", accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']}, response=response)
     
+    return redirect(url_for("index"))
+
 
 @app.route('/item_management/order/delete/execute', methods = ['POST'])
 def orderDelete():
     OrderNumber = request.form.get('OrderNumber')
 
     try:
-        if OrderNumber:
+        if OrderNumber != None:
             cur = mysql.connection.cursor()
             cur.execute("DELETE FROM `wms`.`_order` WHERE `OrderNumber` = %s", [OrderNumber])
             mysql.connection.commit()
             cur.close()
             
     except:
-        print('Error deleting order number.')
-    finally:
-        return redirect(url_for("index"))
+
+        response = {
+            "error" : "Error deleting order.",
+        }
+
+        return render_template('responses/error.html', products=[], itemType="", accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']}, response=response)
+    
+    return redirect(url_for("index"))
 
     
 @app.route('/item_management/order_line/create/execute', methods = ['POST'])
@@ -362,15 +388,20 @@ def orderLineCreate():
     QTY = request.form.get('QTY')
 
     try:
-        if OrderID and ProductID and QTY:
+        if OrderID != None and ProductID != None and QTY != None:
             cur = mysql.connection.cursor()
             cur.execute("INSERT INTO `wms`.`_orderlines`( `OrderID`, `ProductID`, `QTY`) VALUES (%s, %s, %s)", (OrderID, ProductID, QTY))
             mysql.connection.commit()   
             cur.close()      
     except:
-        print("Error creating order line")
-    finally:
-        return redirect(url_for("index"))   
+
+        response = {
+            "error" : "Error creating order line.",
+        }
+
+        return render_template('responses/error.html', products=[], itemType="", accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']}, response=response)
+    
+    return redirect(url_for("index"))  
 
 @app.route('/item_management/order_line/edit/execute', methods = ['POST'])
 def orderLineEdit():
@@ -380,15 +411,20 @@ def orderLineEdit():
     QTY = request.form.get('QTY')
 
     try:
-        if OrderLineID and OrderID and ProductID and QTY:
+        if OrderLineID != None and OrderID != None and ProductID != None and QTY != None:
             cur = mysql.connection.cursor()
             cur.execute("UPDATE `wms`.`_orderlines` SET `OrderID` = (%s), `ProductID` = (%s), `QTY` = (%s) WHERE `OrderLineID` = (%s)", (OrderID, ProductID, QTY, OrderLineID))
             mysql.connection.commit()     
             cur.close()     
     except:
-        print("Error executing order line edit")
-    finally:
-        return redirect(url_for("index"))
+
+        response = {
+            "error" : "Error editing order line.",
+        }
+
+        return render_template('responses/error.html', products=[], itemType="", accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']}, response=response)
+    
+    return redirect(url_for("index"))
 
     
 
@@ -399,15 +435,20 @@ def orderLineDelete():
     OrderLineID = request.form.get('OrderLineID')
 
     try:
-        if OrderLineID:
+        if OrderLineID != None:
             cur = mysql.connection.cursor()
             cur.execute("DELETE FROM `wms`.`_orderlines` WHERE `OrderLineID` = %s", [OrderLineID])
             mysql.connection.commit()
             cur.close()           
     except:
-        print("Error executing order line delete.")
-    finally: 
-        return redirect(url_for("index"))
+
+        response = {
+            "error" : "Error deleting order line",
+        }
+
+        return render_template('responses/error.html', products=[], itemType="", accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']}, response=response)
+    
+    return redirect(url_for("index"))
 
 @app.route('/item_management/bin/create/execute', methods = ['POST'])
 def binCreate():
@@ -415,15 +456,20 @@ def binCreate():
     BinName = request.form.get('BinName')
 
     try:
-        if BinName:
+        if BinName != None:
             cur = mysql.connection.cursor()
             cur.execute("INSERT INTO `wms`.`_bins`( `BinName`) VALUES (%s)", [BinName])
             mysql.connection.commit()
             cur.close()       
     except:
-        print("There was an error inserting bin.")
-    finally: 
-        return redirect(url_for("index"))
+
+        response = {
+            "error" : "Error creating bin.",
+        }
+
+        return render_template('responses/error.html', products=[], itemType="", accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']}, response=response)
+    
+    return redirect(url_for("index"))
     
 
     
@@ -434,15 +480,20 @@ def binEdit():
     BinName = request.form.get('BinName')
 
     try:
-        if BinID and BinName:
+        if BinID != None and BinName != None:
             cur = mysql.connection.cursor()
             cur.execute("UPDATE `wms`.`_bins` SET `BinName` = (%s) WHERE `BinID` = (%s)", (BinName, BinID))
             mysql.connection.commit()
             cur.close()
     except:
-        print("There was an error editing bin.")
-    finally:
-        return redirect(url_for("index"))
+
+        response = {
+            "error" : "Error editing bin.",
+        }
+
+        return render_template('responses/error.html', products=[], itemType="", accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']}, response=response)
+    
+    return redirect(url_for("index"))
 
     
 
@@ -451,15 +502,20 @@ def binDelete():
     BinID = request.form.get('BinID')
 
     try:
-        if BinID:
+        if BinID != None:
             cur = mysql.connection.cursor()
             cur.execute("DELETE FROM `wms`.`_bins` WHERE `BinID` = %s", [BinID])
             mysql.connection.commit()
             cur.close()
     except:
-        print("There was an error removing bin")
-    finally:
-        return redirect(url_for("index"))
+
+        response = {
+            "error" : "Error deleting bin.",
+        }
+
+        return render_template('responses/error.html', products=[], itemType="", accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']}, response=response)
+    
+    return redirect(url_for("index"))
 
 @app.route('/item_management/inventory/create/execute', methods = ['POST'])
 def inventoryCreate():
@@ -468,7 +524,7 @@ def inventoryCreate():
     ProductID = request.form.get('ProductID')
     QTY = request.form.get('QTY')
 
-    if ProductID and BinID and QTY: 
+    if ProductID != None and BinID != None and QTY != None and int(QTY) != 0: 
         try:
             
             # Check to see if this pair is already in the system
@@ -476,13 +532,18 @@ def inventoryCreate():
             response = cur.execute("UPDATE `wms`.`_inventory` SET `QTY` = (%s) WHERE  (`BinID` = (%s) AND `ProductID` = (%s))", (QTY, BinID, ProductID))
 
             if not response:
-                cur.execute("INSERT INTO `wms`.`_inventory`( `ProductID`, `BinID`, `QTY`) VALUES (%s, %s, %s)", (BinID, ProductID, QTY))
+                cur.execute("INSERT INTO `wms`.`_inventory`( `ProductID`, `BinID`, `QTY`) VALUES (%s, %s, %s)", (ProductID, BinID, QTY))
             mysql.connection.commit()
             cur.close()
         except:
-            print("No such product id or bin id in database")
-        finally:
-            return redirect(url_for("index"))
+
+            response = {
+                "error" : "Error creating inventory",
+            }
+
+            return render_template('responses/error.html', products=[], itemType="", accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']}, response=response)
+        
+        return redirect(url_for("index"))
             
         
 
@@ -494,36 +555,42 @@ def inventoryEdit():
     QTY = request.form.get('QTY')
 
     try:
-        if InventoryID and QTY:
+        if InventoryID != None and QTY != None:
             cur = mysql.connection.cursor()
             cur.execute("UPDATE `wms`.`_inventory` SET `QTY` = (%s) WHERE `InventoryID` = (%s)", (QTY, InventoryID))
             mysql.connection.commit() 
             cur.close()    
     except:
-        print("There was an error editing inventory.")
-    finally:     
-        return redirect(url_for("index"))
+
+        response = {
+            "error" : "Error editing inventory",
+        }
+
+        return render_template('responses/error.html', products=[], itemType="", accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']}, response=response)
+    
+    return redirect(url_for("index"))
         
-
-    
-
-    
 
 @app.route('/item_management/inventory/delete/execute', methods = ['POST'])
 def inventoryDelete():
     InventoryID = request.form.get('InventoryID')
 
     try:
-        if InventoryID:
+        if InventoryID != None:
             cur = mysql.connection.cursor()
             cur.execute("DELETE FROM `wms`.`_inventory` WHERE `InventoryID` = %s", [InventoryID])
             mysql.connection.commit()
+            cur.close() 
             
     except:
-        print("There was an issue deleting inventory")
-    finally:
-        cur.close()
-        return redirect(url_for("index"))
+
+        response = {
+            "error" : "Error deleting inventory",
+        }
+
+        return render_template('responses/error.html', products=[], itemType="", accountInfo = { "name" : session['user name'], "email" : session['user email'], "counts" : session['counts']}, response=response)
+    
+    return redirect(url_for("index"))
 
     
 
